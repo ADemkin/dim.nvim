@@ -1,0 +1,234 @@
+==============================================================================
+INTRODUCTION                                                        *dim*
+
+dim.nvim is a dynamic color–dimming engine for Neovim.
+
+It modifies all highlight groups in-place and applies a perceptual
+grayscale/contrast compression transform. The goal is to make Neovim look
+progressively "less attractive" outside of working hours, helping reduce
+overworking and eye strain.
+
+Unlike colorscheme switching, dim.nvim:
+- preserves your colorscheme
+- is fully reversible
+- can be applied gradually
+- can be controlled by time or custom logic
+
+dim.nvim supports:
+- manual static dimming
+- time-based schedules
+- Lua override functions for custom policies (e.g. weekends)
+
+==============================================================================
+INSTALLATION                                                       *dim-install*
+
+Using lazy.nvim:
+
+>
+  {
+    "yourname/dim.nvim",
+    config = function()
+      require("dim").setup()
+    end
+  }
+<
+
+Using packer.nvim:
+
+>
+  use {
+    "yourname/dim.nvim",
+    config = function()
+      require("dim").setup()
+    end
+  }
+<
+
+Restart Neovim or run |:source| after installation.
+
+==============================================================================
+BASIC USAGE                                                        *dim-usage*
+
+Enable dimming:
+
+>
+  :Dim enable
+<
+
+Disable dimming:
+
+>
+  :Dim disable
+<
+
+Toggle dimming:
+
+>
+  :Dim toggle
+<
+
+Apply static dim:
+
+>
+  :Dim tint 0.6
+<
+
+Values are between 0.0 and 1.0:
+- 0.0 = no dimming
+- 1.0 = full grayscale + contrast compression
+
+Static dim overrides any active schedule until |:Dim start| is used again.
+
+==============================================================================
+CONFIGURATION                                                     *dim-setup*
+
+dim.nvim is configured via:
+
+>
+  require("dim").setup({ ... })
+<
+
+Available options:
+
+>
+  {
+    enabled = false,          -- start enabled (default false)
+    update_interval = 60000,  -- schedule update interval in ms
+    schedule = { ... },       -- optional time schedule
+    override = function() end -- optional Lua override
+  }
+<
+
+All fields are optional.
+
+==============================================================================
+STATIC MODE                                                       *dim-static*
+
+You do not need to use |dim-setup| at all if you only want manual control.
+
+Simply use:
+
+>
+  :Dim tint 0.5
+<
+
+This sets a fixed dim level until changed or disabled.
+
+==============================================================================
+TIME SCHEDULE                                                     *dim-schedule*
+
+A schedule is a table mapping times of day to dim levels:
+
+>
+  require("dim").setup({
+    enabled = true,
+    schedule = {
+      ["08:00"] = 0.0,
+      ["16:00"] = 0.1,
+      ["18:00"] = 0.7,
+      ["20:00"] = 1.0,
+    },
+  })
+<
+
+The schedule defines a piecewise linear function:
+
+- At 08:00 → dim = 0.0
+- At 16:00 → dim = 0.1
+- At 18:00 → dim = 0.7
+- At 20:00 → dim = 1.0
+
+Between these times dim levels are interpolated smoothly.
+
+Time format must be `"HH:MM"` in 24-hour format.
+
+To start the scheduler:
+
+>
+  :Dim start
+<
+
+To stop it:
+
+>
+  :Dim stop
+<
+
+==============================================================================
+OVERRIDE FUNCTION                                                 *dim-override*
+
+An override function allows you to inject custom logic that replaces the
+schedule.
+
+It is called every update tick. If it returns a value, that value is used
+and the schedule is ignored. If it returns nil, the schedule is used.
+
+Example: dim more on weekends
+
+>
+  require("dim").setup({
+    enabled = true,
+    schedule = {
+      ["08:00"] = 0.0,
+      ["16:00"] = 0.1,
+      ["18:00"] = 0.7,
+      ["20:00"] = 1.0,
+    },
+    override = function()
+      local day = os.date("%A")
+      if day == "Saturday" or day == "Sunday" then
+        return 0.9
+      end
+    end,
+  })
+<
+
+In this example:
+- On weekdays → follow the time schedule
+- On weekends → always use dim = 0.9
+
+The override function must return:
+- a number between 0 and 1
+- or nil to fall back to the schedule
+
+==============================================================================
+COMMANDS                                                         *dim-commands*
+
+:Dim enable
+    Enable dimming.
+
+:Dim disable
+    Disable dimming (restores original colors).
+
+:Dim toggle
+    Toggle dimming on/off.
+
+:Dim tint {amount}
+    Set a static dim level.
+    Overrides any active schedule.
+
+:Dim start
+    Start the time-based scheduler.
+    Clears any static tint.
+
+:Dim stop
+    Stop the scheduler.
+
+:Dim state
+    Print internal state (debugging).
+
+==============================================================================
+NOTES                                                             *dim-notes*
+
+- dim.nvim is fully reversible.
+- It does not modify your colorscheme permanently.
+- It does not create new highlight groups.
+- It works with any colorscheme, lualine, and file tree plugins.
+
+==============================================================================
+LICENSE                                                          *dim-license*
+
+See LICENSE file in the repository.
+
+==============================================================================
+vim:tw=78:ft=help
