@@ -1,5 +1,3 @@
-require('dim.commands')
-
 local api = require('dim.api')
 local state = require('dim.state')
 

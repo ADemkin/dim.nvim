@@ -1,7 +1,7 @@
 -- Global perceptual curve.
 -- Increase → steeper falloff (more night-shift like)
 -- Decrease → more linear
-DIM_CURVE = 1.5
+local DIM_CURVE = 1.5
 
 local function tint_lspace(amount)
   local k = math.max(0, math.min(1, amount))
