@@ -153,15 +153,31 @@ To stop it:
 >
   :Dim stop
 <
-
 ==============================================================================
 OVERRIDE FUNCTION                                                 *dim-override*
 
-An override function allows you to inject custom logic that replaces the
+An override function allows you to modify the dim level produced by the
 schedule.
 
-It is called every update tick. If it returns a value, that value is used
-and the schedule is ignored. If it returns nil, the schedule is used.
+It is called every update tick with the current dim amount as input.
+
+Signature:
+
+>
+  override(amount) -> new_amount | nil
+<
+
+If the function returns:
+- a number → it replaces the current amount
+- nil       → the original amount is kept
+
+This makes override a filter, not a replacement.
+
+It can:
+- clamp values
+- boost or reduce dim
+- change behavior on specific days
+- implement custom policies
 
 Example: dim more on weekends
 
@@ -174,22 +190,39 @@ Example: dim more on weekends
       ["18:00"] = 0.7,
       ["20:00"] = 1.0,
     },
-    override = function()
+    override = function(amount)
       local day = os.date("%A")
       if day == "Saturday" or day == "Sunday" then
-        return 0.9
+        return math.max(amount, 0.5)
       end
     end,
   })
 <
 
 In this example:
-- On weekdays → follow the time schedule
-- On weekends → always use dim = 0.9
+- On weekdays → the time schedule is used
+- On weekends → dim minimum is 0.5 regardless of time
+
+Example: never let dim drop below 0.4
+
+>
+  override = function(amount)
+    return math.max(amount, 0.4)
+  end
+<
+
+Example: never let dim exceed 0.8
+
+>
+  override = function(amount)
+    return math.min(amount, 0.8)
+  end
+<
 
 The override function must return:
 - a number between 0 and 1
-- or nil to fall back to the schedule
+- or nil to keep the current value
+
 
 ==============================================================================
 COMMANDS                                                         *dim-commands*

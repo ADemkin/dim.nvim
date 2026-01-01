@@ -104,38 +104,45 @@ Automatically increase dimming in the evening:
 The dim level will smoothly interpolate between those values during the day.
 
 ______________________________________________________________________
+## Override
 
-## Weekend override
+Overrides in `dim.nvim` are **filters**.
+They receive the current dim value (from the schedule) and may return a modified one.
 
-You can override the schedule with Lua logic.
-
-Example: always dim heavily on weekends:
+Signature:
 
 ```lua
-{
-  "ademkin/dim.nvim",
-  opts = {
-    enabled = true,
-    schedule = {
-      ["06:00"] = 1.0,
-      ["08:00"] = 0.0,
-      ["16:00"] = 0.0,
-      ["18:00"] = 0.7,
-      ["20:00"] = 1.0,
-    },
-    override = function()
-      local day = os.date("%A")
-      if day == "Saturday" or day == "Sunday" then
-        return 0.9
-      end
-    end,
-  },
-}
+override = function(amount)
+  return new_amount or nil
+end
 ```
 
-If `override()` returns a value, it replaces the schedule.
-If it returns `nil`, the schedule is used.
-The `override()` function is called on every tic, so don't put any heavy stuff here.
+If the function returns:
+
+* a number → it replaces the current dim
+* `nil` → the current dim is kept
+
+Example: shift minimum dimming on weekends
+
+```lua
+override = function(amount)
+  local day = os.date("%A")
+  if day == "Saturday" or day == "Sunday" then
+    return math.max(amount, 0.5)
+  end
+end
+```
+
+Example: Force maximum dim on weekend
+
+```lua
+override = function()
+  local day = os.date("%A")
+  if day == "Saturday" or day == "Sunday" then
+    return 1.0
+  end
+end
+```
 
 ______________________________________________________________________
 
