@@ -1,5 +1,8 @@
 local api = require('dim.api')
 
+local patch_devicons = require('dim.patch_devicons')
+patch_devicons()
+
 vim.api.nvim_create_autocmd('ColorScheme', {
   callback = function()
     api.remove_original_hl()
