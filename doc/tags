@@ -1,0 +1,11 @@
+dim	dim.txt	/*dim*
+dim-commands	dim.txt	/*dim-commands*
+dim-install	dim.txt	/*dim-install*
+dim-license	dim.txt	/*dim-license*
+dim-notes	dim.txt	/*dim-notes*
+dim-override	dim.txt	/*dim-override*
+dim-schedule	dim.txt	/*dim-schedule*
+dim-setup	dim.txt	/*dim-setup*
+dim-static	dim.txt	/*dim-static*
+dim-usage	dim.txt	/*dim-usage*
+dim.nvim	dim.txt	/*dim.nvim*
