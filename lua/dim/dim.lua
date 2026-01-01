@@ -1,4 +1,4 @@
-local original_hl = nil
+local state = require('dim.state')
 
 local function hex_to_rgb(hex)
   hex = hex:gsub('#', '')
@@ -10,11 +10,11 @@ local function rgb_to_int(r, g, b)
 end
 
 local function snapshot_highlights()
-  original_hl = {}
+  state.original_hl = {}
   for _, name in ipairs(vim.fn.getcompletion('', 'highlight')) do
     local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = name, link = false })
     if ok and hl then
-      original_hl[name] = hl
+      state.original_hl[name] = hl
     end
   end
 end
@@ -22,11 +22,11 @@ end
 --- Mutate ALL highlight groups in-place (idempotent & reversible)
 --- @param fn fun(hex:string):string|nil
 local function dim_highlights(fn)
-  if not original_hl then
+  if not state.original_hl then
     snapshot_highlights()
   end
 
-  for name, hl in pairs(original_hl) do
+  for name, hl in pairs(state.original_hl) do
     local new = {}
 
     for _, key in ipairs({ 'fg', 'bg', 'sp' }) do

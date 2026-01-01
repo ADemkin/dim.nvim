@@ -5,6 +5,7 @@ local State = {
   schedule = nil, -- normalized schedule (points)
   update_interval = 60 * 1000,
   override = nil, -- function() -> number | nil
+  original_hl = nil,
 }
 
 return State

@@ -1,5 +1,12 @@
 local api = require('dim.api')
 
+vim.api.nvim_create_autocmd('ColorScheme', {
+  callback = function()
+    api.remove_original_hl()
+    api.apply()
+  end,
+})
+
 vim.api.nvim_create_user_command('Dim', function(opts)
   local args = vim.split(opts.args, '%s+')
 

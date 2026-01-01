@@ -96,4 +96,8 @@ function M.stop()
   end
 end
 
+function M.remove_original_hl()
+  state.original_hl = nil
+end
+
 return M
