@@ -31,6 +31,8 @@ ______________________________________________________________________
 ```lua
 {
   "ademkin/dim.nvim",
+  lazy = false,
+  priority = 1000,  -- load with colorscheme to prevent flicker
   opts = {
     enabled = true,
     schedule = {
@@ -71,6 +73,8 @@ You can use dim.nvim without any configuration:
 ```lua
 {
   "ademkin/dim.nvim",
+  lazy = false,
+  priority = 1000,  -- load with colorscheme to prevent flicker
   config = function()
     vim.cmd('Dim tint 0.5')
   end,
@@ -86,17 +90,14 @@ ______________________________________________________________________
 Automatically increase dimming in the evening:
 
 ```lua
-{
-  "ademkin/dim.nvim",
-  opts = {
-    enabled = true,
-    schedule = {
-      ["06:00"] = 1.0,
-      ["08:00"] = 0.0,
-      ["16:00"] = 0.0,
-      ["18:00"] = 0.7,
-      ["20:00"] = 1.0,
-    },
+opts = {
+  enabled = true,
+  schedule = {
+    ["06:00"] = 1.0,
+    ["08:00"] = 0.0,
+    ["16:00"] = 0.0,
+    ["18:00"] = 0.7,
+    ["20:00"] = 1.0,
   },
 }
 ```
@@ -125,27 +126,64 @@ If the function returns:
 Example: shift minimum dimming on weekends
 
 ```lua
-override = function(amount)
-  local day = os.date("%A")
-  if day == "Saturday" or day == "Sunday" then
-    return math.max(amount, 0.5)
-  end
-end
+opts = {
+  enabled = true,
+  schedule = {
+    ["06:00"] = 1.0,
+    ["08:00"] = 0.0,
+    ["16:00"] = 0.0,
+    ["20:00"] = 1.0,
+  },
+  override = function(amount)
+    local day = os.date("%A")
+    if day == "Saturday" or day == "Sunday" then
+      return math.max(amount, 0.5)
+    end
+  end,
+}
 ```
 
 Example: Force maximum dim on weekend
 
 ```lua
-override = function()
-  local day = os.date("%A")
-  if day == "Saturday" or day == "Sunday" then
-    return 1.0
-  end
-end
+opts = {
+  enabled = true,
+  schedule = {
+    ["06:00"] = 1.0,
+    ["08:00"] = 0.0,
+    ["16:00"] = 0.0,
+    ["20:00"] = 1.0,
+  },
+  override = function()
+    local day = os.date("%A")
+    if day == "Saturday" or day == "Sunday" then
+      return 1.0
+    end
+  end,
+}
 ```
+
 
 ______________________________________________________________________
 
+## Update Interval
+
+By default plugin run updates once a minute. You can adjust it:
+
+```lua
+opts = {
+  enabled = true,
+  update_interval = 1000, -- once a second
+  schedule = {
+    ["06:00"] = 1.0,
+    ["08:00"] = 0.0,
+    ["16:00"] = 0.0,
+    ["20:00"] = 1.0,
+  },
+}
+```
+
+______________________________________________________________________
 ## Commands
 
 | Command | Description |
