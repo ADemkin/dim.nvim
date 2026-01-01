@@ -31,17 +31,15 @@ ______________________________________________________________________
 ```lua
 {
   "ademkin/dim.nvim",
-  config = function()
-    require("dim").setup({
-      enabled = true,
-      schedule = {
-        ["06:00"] = 1.0,
-        ["08:00"] = 0.0,
-        ["16:00"] = 0.0,
-        ["20:00"] = 1.0,
-      },
-    })
-  end
+  opts = {
+    enabled = true,
+    schedule = {
+      ["06:00"] = 1.0,
+      ["08:00"] = 0.0,
+      ["16:00"] = 0.0,
+      ["20:00"] = 1.0,
+    },
+  }
 }
 ```
 
@@ -70,8 +68,13 @@ ______________________________________________________________________
 
 You can use dim.nvim without any configuration:
 
-```
-:Dim tint 0.5
+```lua
+{
+  "ademkin/dim.nvim",
+  config = function()
+    vim.cmd('Dim tint 0.5')
+  end,
+}
 ```
 
 This applies a static dim (0 = none, 1 = maximum).
@@ -83,16 +86,19 @@ ______________________________________________________________________
 Automatically increase dimming in the evening:
 
 ```lua
-require("dim").setup({
-  enabled = true,
-  schedule = {
-    ["06:00"] = 1.0,
-    ["08:00"] = 0.0,
-    ["16:00"] = 0.0,
-    ["18:00"] = 0.7,
-    ["20:00"] = 1.0,
+{
+  "ademkin/dim.nvim",
+  opts = {
+    enabled = true,
+    schedule = {
+      ["06:00"] = 1.0,
+      ["08:00"] = 0.0,
+      ["16:00"] = 0.0,
+      ["18:00"] = 0.7,
+      ["20:00"] = 1.0,
+    },
   },
-})
+}
 ```
 
 The dim level will smoothly interpolate between those values during the day.
@@ -106,27 +112,30 @@ You can override the schedule with Lua logic.
 Example: always dim heavily on weekends:
 
 ```lua
-require("dim").setup({
-  enabled = true,
-  schedule = {
-    ["06:00"] = 1.0,
-    ["08:00"] = 0.0,
-    ["16:00"] = 0.0,
-    ["18:00"] = 0.7,
-    ["20:00"] = 1.0,
+{
+  "ademkin/dim.nvim",
+  opts = {
+    enabled = true,
+    schedule = {
+      ["06:00"] = 1.0,
+      ["08:00"] = 0.0,
+      ["16:00"] = 0.0,
+      ["18:00"] = 0.7,
+      ["20:00"] = 1.0,
+    },
+    override = function()
+      local day = os.date("%A")
+      if day == "Saturday" or day == "Sunday" then
+        return 0.9
+      end
+    end,
   },
-  override = function()
-    local day = os.date("%A")
-    if day == "Saturday" or day == "Sunday" then
-      return 0.9
-    end
-  end,
-})
+}
 ```
 
 If `override()` returns a value, it replaces the schedule.
 If it returns `nil`, the schedule is used.
-The `override()` function is called on every tic, so don\`t put any heavy stuff here.
+The `override()` function is called on every tic, so don't put any heavy stuff here.
 
 ______________________________________________________________________
 
