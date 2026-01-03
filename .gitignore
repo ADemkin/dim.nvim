@@ -41,5 +41,4 @@ luac.out
 
 # Python
 venv
-requirements.txt
-pyproject.toml
+uv.lock
