@@ -105,6 +105,7 @@ opts = {
 The dim level will smoothly interpolate between those values during the day.
 
 ______________________________________________________________________
+
 ## Override
 
 Overrides in `dim.nvim` are **filters**.
@@ -120,8 +121,8 @@ end
 
 If the function returns:
 
-* a number → it replaces the current dim
-* `nil` → the current dim is kept
+- a number → it replaces the current dim
+- `nil` → the current dim is kept
 
 Example: shift minimum dimming on weekends
 
@@ -163,7 +164,6 @@ opts = {
 }
 ```
 
-
 ______________________________________________________________________
 
 ## Update Interval
@@ -184,6 +184,7 @@ opts = {
 ```
 
 ______________________________________________________________________
+
 ## Commands
 
 | Command | Description |
