@@ -33,6 +33,7 @@ ______________________________________________________________________
   "ademkin/dim.nvim",
   lazy = false,
   priority = 1000,  -- load with colorscheme to prevent flicker
+  ---@type DimOpts
   opts = {
     enabled = true,
     schedule = {
@@ -51,6 +52,7 @@ ______________________________________________________________________
 use {
   "ademkin/dim.nvim",
   config = function()
+    ---@type DimOpts
     require("dim").setup({
       enabled = true,
       schedule = {
@@ -90,6 +92,7 @@ ______________________________________________________________________
 Automatically increase dimming in the evening:
 
 ```lua
+---@type DimOpts
 opts = {
   enabled = true,
   schedule = {
@@ -114,6 +117,7 @@ They receive the current dim value (from the schedule) and may return a modified
 Signature:
 
 ```lua
+---@type Override
 override = function(amount)
   return new_amount or nil
 end
@@ -127,6 +131,7 @@ If the function returns:
 Example: shift minimum dimming on weekends
 
 ```lua
+---@type DimOpts
 opts = {
   enabled = true,
   schedule = {
@@ -135,6 +140,7 @@ opts = {
     ["16:00"] = 0.0,
     ["20:00"] = 1.0,
   },
+  ---@type Override
   override = function(amount)
     local day = os.date("%A")
     if day == "Saturday" or day == "Sunday" then
@@ -147,6 +153,7 @@ opts = {
 Example: Force maximum dim on weekend
 
 ```lua
+---@type DimOpts
 opts = {
   enabled = true,
   schedule = {
@@ -155,6 +162,7 @@ opts = {
     ["16:00"] = 0.0,
     ["20:00"] = 1.0,
   },
+  ---@type Override
   override = function()
     local day = os.date("%A")
     if day == "Saturday" or day == "Sunday" then
@@ -171,6 +179,7 @@ ______________________________________________________________________
 By default plugin run updates once a minute. You can adjust it:
 
 ```lua
+---@type DimOpts
 opts = {
   enabled = true,
   update_interval = 1000, -- once a second
