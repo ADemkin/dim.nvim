@@ -10,6 +10,7 @@ vim.api.nvim_create_autocmd('ColorScheme', {
   end,
 })
 
+---@param opts { nargs: string, args: string, fargs: string[] }
 vim.api.nvim_create_user_command('Dim', function(opts)
   local args = vim.split(opts.args, '%s+')
 

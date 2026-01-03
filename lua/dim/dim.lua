@@ -1,10 +1,16 @@
 local state = require('dim.state')
 
+---@param hex string
+---@return number, number, number
 local function hex_to_rgb(hex)
   hex = hex:gsub('#', '')
   return tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5, 6), 16)
 end
 
+---@param r number
+---@param g number
+---@param b number
+---@return number
 local function rgb_to_int(r, g, b)
   return r * 65536 + g * 256 + b
 end
@@ -20,7 +26,7 @@ local function snapshot_highlights()
 end
 
 --- Mutate ALL highlight groups in-place (idempotent & reversible)
---- @param fn fun(hex:string):string|nil
+---@param fn fun(hex: string): string
 local function dim_highlights(fn)
   if not state.original_hl then
     snapshot_highlights()

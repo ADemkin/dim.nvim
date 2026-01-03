@@ -10,31 +10,44 @@ local VALID_KEYS = {
   override = true,
 }
 
+---@param msg string
 local function notify_err(msg)
   vim.notify('dim.nvim: ' .. msg, vim.log.levels.ERROR)
 end
 
-local function is_valid_time(k)
-  if type(k) ~= 'string' then
+---@param time string
+---@return boolean
+local function is_valid_time(time)
+  if type(time) ~= 'string' then
     return false
   end
-  local h, m = k:match('^(%d%d):(%d%d)$')
+  local h, m = time:match('^(%d%d):(%d%d)$')
+  if not (h and m) then
+    return false
+  end
   h, m = tonumber(h), tonumber(m)
   return h and m and h >= 0 and h <= 23 and m >= 0 and m <= 59
 end
 
-local function to_minutes(k)
-  local h, m = k:match('^(%d%d):(%d%d)$')
+---@param time TimeString
+---@return Minute
+local function to_minutes(time)
+  local h, m = time:match('^(%d%d):(%d%d)$')
   return tonumber(h) * 60 + tonumber(m)
 end
 
-local function is_valid_k(v)
-  return type(v) == 'number' and v >= 0 and v <= 1
+---@param k any
+---@return boolean
+local function is_valid_k(k)
+  return type(k) == 'number' and k >= 0 and k <= 1
 end
 
-local function normalize_schedule(tbl)
+---@param schedule Schedule
+---@return NormalizedSchedule?
+local function normalize_schedule(schedule)
+  ---@type NormalizedSchedule
   local out = {}
-  for k, v in pairs(tbl) do
+  for k, v in pairs(schedule) do
     if not is_valid_time(k) then
       notify_err('invalid time key: ' .. tostring(k))
       return nil
@@ -51,6 +64,7 @@ local function normalize_schedule(tbl)
   return out
 end
 
+---@param opts DimOpts
 function M.setup(opts)
   opts = opts or {}
 

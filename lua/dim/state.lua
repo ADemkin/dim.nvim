@@ -1,10 +1,11 @@
+---@type DimState
 local State = {
   enabled = false,
-  tint = nil, -- number ∈ [0,1] | nil (static mode)
+  tint = nil,
   timer = nil,
-  schedule = nil, -- normalized schedule (points)
+  schedule = nil,
   update_interval = 60 * 1000,
-  override = nil, -- function() -> number | nil
+  override = nil,
   original_hl = nil,
 }
 

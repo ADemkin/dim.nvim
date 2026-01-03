@@ -3,6 +3,8 @@
 -- Decrease → more linear
 local DIM_CURVE = 1.5
 
+---@param amount Amount
+---@return fun(hex: string): string
 local function tint_lspace(amount)
   local k = math.max(0, math.min(1, amount))
 
